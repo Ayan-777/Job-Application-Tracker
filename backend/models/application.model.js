@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-const jobSchema = new mongoose.Schema({
+const applicationSchema = new mongoose.Schema({
     company: {
         type: String,
         required: true
@@ -27,12 +27,14 @@ const jobSchema = new mongoose.Schema({
     },
     link: {
         type: String,
-        trim: true
+        trim: true,
+        required: true,
     },
     notes: {
-        type: String
+        type: String,
+        required: true,
     }
 
 }, { timestamps: true })
 
-export const Job =  mongoose.model('Job', jobSchema);
+export const Application =  mongoose.model('Application', applicationSchema);
