@@ -39,3 +39,17 @@ export async function createApplication(req, res) {
 
 
 }
+
+export async function getApplications(req, res) {
+    try {
+        const user = req.userId;
+
+        const applications = await Application.find({ user }).sort({ createdAt: -1 })
+
+        return res.status(200).json({ applications })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message: "Failed to fetch applications"});
+    }
+
+}
