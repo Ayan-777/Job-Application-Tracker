@@ -53,3 +53,23 @@ export async function getApplications(req, res) {
     }
 
 }
+
+
+export async function getApplicationById(req, res){
+    try {
+        const applicationId = req.params.id;
+        const application = await Application.findOne({ _id: applicationId, user: req.userId});
+
+        if(!application){
+            return res.status(404).json({ message: "Application not found or you do not have permission to view it."})
+        }
+
+        return res.status(200).json({ application });
+    } catch (error) {
+        console.error(error);
+        if(error.name === 'CastError'){
+            return res.status(404).json({ message: "not found"})
+        }
+        return res.status(500).json({ message: "internal server error"});
+    }
+}
