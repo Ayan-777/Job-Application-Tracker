@@ -49,27 +49,58 @@ export async function getApplications(req, res) {
         return res.status(200).json({ applications })
     } catch (error) {
         console.error(error)
-        return res.status(500).json({message: "Failed to fetch applications"});
+        return res.status(500).json({ message: "Failed to fetch applications" });
     }
 
 }
 
 
-export async function getApplicationById(req, res){
+export async function getApplicationById(req, res) {
     try {
         const applicationId = req.params.id;
-        const application = await Application.findOne({ _id: applicationId, user: req.userId});
+        const application = await Application.findOne({ _id: applicationId, user: req.userId });
 
-        if(!application){
-            return res.status(404).json({ message: "Application not found or you do not have permission to view it."})
+        if (!application) {
+            return res.status(404).json({ message: "Application not found or you do not have permission to view it." })
         }
 
         return res.status(200).json({ application });
     } catch (error) {
         console.error(error);
-        if(error.name === 'CastError'){
-            return res.status(404).json({ message: "not found"})
+        if (error.name === 'CastError') {
+            return res.status(404).json({ message: "not found" })
         }
-        return res.status(500).json({ message: "internal server error"});
+        return res.status(500).json({ message: "internal server error" });
+    }
+}
+
+export async function updateApplication(req, res) {
+    try {
+        const applicationId = req.params.id;
+        const { company, role, status, appliedDate, link, notes } = req.body;
+
+        const updatedPayload = {
+            company, role, status, appliedDate, link, notes
+        }
+
+        const application = await Application.findOneAndUpdate(
+            { _id: applicationId, user: req.userId },
+            updatedPayload,
+            { returnDocument: 'after' }
+        );
+
+        if (!application) {
+            return res.status(404).json({ message: "not found" });
+        }
+
+        return res.status(200).json({
+            application,
+        })
+    } catch (error) {
+        console.error(error);
+        if (error.name === 'CastError') {
+            return res.status(404).json({ message: "not found" })
+        }
+        return res.status(500).json({ message: "internal server error" });
     }
 }
