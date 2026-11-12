@@ -104,3 +104,27 @@ export async function updateApplication(req, res) {
         return res.status(500).json({ message: "internal server error" });
     }
 }
+
+
+export async function deleteApplication(req, res) {
+    try {
+        const applicationId = req.params.id;
+
+        const application = await Application.findOneAndDelete({ _id: applicationId, user: req.userId });
+
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        return res.status(200).json({
+            message: 'Application deleted successfully.'
+        })
+    } catch (error) {
+        console.error(error);
+        if (error.name === 'CastError') {
+            return res.status(404).json({ message: "not found" })
+        }
+
+        return res.status(500).json({ message: "internal server error" });
+    }
+}
